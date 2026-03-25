@@ -1,5 +1,10 @@
 #!/bin/bash
 echo ""
-echo "  Starting Reagent Connector..."
+echo "  Reagent Connector"
 echo ""
+if [ ! -d "node_modules" ]; then
+    echo "  Installing dependencies..."
+    npm install --silent
+    echo ""
+fi
 node server.js "$@"
