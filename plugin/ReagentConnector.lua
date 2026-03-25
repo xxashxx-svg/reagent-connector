@@ -362,15 +362,6 @@ local function executeMcpCommand(cmd)
             isServer = RunService:IsServer()
         }
 
-    elseif cmdType == "play-game" then
-        return { error = "Roblox doesn't allow plugins to start Play mode. Press F5 in Studio manually, then use run_lua to test logic." }
-
-    elseif cmdType == "stop-game" then
-        return { error = "Roblox doesn't allow plugins to stop Play mode. Press Shift+F5 in Studio manually." }
-
-    elseif cmdType == "pause-game" then
-        return { error = "Roblox doesn't allow plugins to pause Play mode. Press F5 again in Studio to pause." }
-
     elseif cmdType == "undo" then
         local ok, err = pcall(function() ChangeHistoryService:Undo() end)
         if ok then return { status = "undone" }
@@ -380,28 +371,6 @@ local function executeMcpCommand(cmd)
         local ok, err = pcall(function() ChangeHistoryService:Redo() end)
         if ok then return { status = "redone" }
         else return { error = "Redo failed: " .. tostring(err) } end
-
-    elseif cmdType == "set-camera" then
-        local cam = workspace.CurrentCamera
-        if not cam then return { error = "No camera found" } end
-        local pos = Vector3.new(params.position.X or 0, params.position.Y or 0, params.position.Z or 0)
-        if params.lookAt then
-            local look = Vector3.new(params.lookAt.X or 0, params.lookAt.Y or 0, params.lookAt.Z or 0)
-            cam.CFrame = CFrame.new(pos, look)
-        else
-            cam.CFrame = CFrame.new(pos)
-        end
-        return { position = serializeValue(cam.CFrame.Position) }
-
-    elseif cmdType == "get-camera" then
-        local cam = workspace.CurrentCamera
-        if not cam then return { error = "No camera found" } end
-        return {
-            position = serializeValue(cam.CFrame.Position),
-            lookVector = serializeValue(cam.CFrame.LookVector),
-            upVector = serializeValue(cam.CFrame.UpVector),
-            fieldOfView = cam.FieldOfView
-        }
 
     elseif cmdType == "batch-create" then
         local results = {}
@@ -822,84 +791,12 @@ statsLabel.Text = ""
 statsLabel.Visible = false
 statsLabel.Parent = content
 
--- ============ BUTTON HELPERS ============
-local buttonBaseColors = {}
-
-local function createMinimalButton(parent, text, posY)
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0, 100, 0, 36)
-    btn.Position = UDim2.new(0.5, -50, 0, posY)
-    btn.BackgroundColor3 = COLORS.surface0
-    btn.BorderSizePixel = 0
-    btn.Text = text
-    btn.TextColor3 = COLORS.text
-    btn.Font = Enum.Font.Gotham
-    btn.TextSize = 13
-    btn.AutoButtonColor = false
-    btn.Parent = parent
-
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 8)
-    corner.Parent = btn
-
-    local stroke = Instance.new("UIStroke")
-    stroke.Color = COLORS.surface1
-    stroke.Thickness = 1
-    stroke.Transparency = 0.3
-    stroke.Parent = btn
-
-    buttonBaseColors[btn] = COLORS.surface0
-
-    btn.MouseEnter:Connect(function()
-        tweenProperty(btn, {BackgroundColor3 = COLORS.surface1}, TWEEN_FAST)
-    end)
-
-    btn.MouseLeave:Connect(function()
-        tweenProperty(btn, {BackgroundColor3 = COLORS.surface0}, TWEEN_FAST)
-    end)
-
-    return btn
-end
-
--- ============ SYNC BUTTON ============
-local syncBtn = createMinimalButton(content, "sync", 76)
-
--- ============ PULL BUTTON ============
-local pullBtn = Instance.new("TextButton")
-pullBtn.Size = UDim2.new(0, 100, 0, 36)
-pullBtn.Position = UDim2.new(0.5, 4, 0, 76)
-pullBtn.BackgroundColor3 = COLORS.surface0
-pullBtn.BorderSizePixel = 0
-pullBtn.Text = "pull"
-pullBtn.TextColor3 = COLORS.text
-pullBtn.Font = Enum.Font.Gotham
-pullBtn.TextSize = 13
-pullBtn.AutoButtonColor = false
-pullBtn.Visible = false
-pullBtn.Parent = content
-
-local pullBtnCorner = Instance.new("UICorner")
-pullBtnCorner.CornerRadius = UDim.new(0, 8)
-pullBtnCorner.Parent = pullBtn
-
-local pullBtnStroke = Instance.new("UIStroke")
-pullBtnStroke.Color = COLORS.surface1
-pullBtnStroke.Thickness = 1
-pullBtnStroke.Transparency = 0.3
-pullBtnStroke.Parent = pullBtn
-
-pullBtn.MouseEnter:Connect(function()
-    tweenProperty(pullBtn, {BackgroundColor3 = COLORS.surface1}, TWEEN_FAST)
-end)
-
-pullBtn.MouseLeave:Connect(function()
-    tweenProperty(pullBtn, {BackgroundColor3 = COLORS.surface0}, TWEEN_FAST)
-end)
+-- (sync/pull buttons removed - connect auto-syncs)
 
 -- ============ PROGRESS BAR ============
 local progressFrame = Instance.new("Frame")
 progressFrame.Size = UDim2.new(1, -40, 0, 4)
-progressFrame.Position = UDim2.new(0, 20, 0, 124)
+progressFrame.Position = UDim2.new(0, 20, 0, 76)
 progressFrame.BackgroundColor3 = COLORS.surface0
 progressFrame.BorderSizePixel = 0
 progressFrame.Visible = false
@@ -989,86 +886,12 @@ local function completeProgress()
     updateProgressBar()
 end
 
--- ============ SLIDER TOGGLE HELPER ============
-local function createSliderToggle(parent, posY, defaultOn)
-    local track = Instance.new("Frame")
-    track.Size = UDim2.new(0, 40, 0, 20)
-    track.Position = UDim2.new(1, -40, 0, posY)
-    track.BackgroundColor3 = defaultOn and COLORS.accent or COLORS.surface1
-    track.BorderSizePixel = 0
-    track.Parent = parent
-
-    local trackCorner = Instance.new("UICorner")
-    trackCorner.CornerRadius = UDim.new(1, 0)
-    trackCorner.Parent = track
-
-    local knob = Instance.new("Frame")
-    knob.Size = UDim2.new(0, 16, 0, 16)
-    knob.Position = defaultOn and UDim2.new(1, -18, 0.5, -8) or UDim2.new(0, 2, 0.5, -8)
-    knob.BackgroundColor3 = COLORS.text
-    knob.BorderSizePixel = 0
-    knob.Parent = track
-
-    local knobCorner = Instance.new("UICorner")
-    knobCorner.CornerRadius = UDim.new(1, 0)
-    knobCorner.Parent = knob
-
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(1, 0, 1, 0)
-    btn.BackgroundTransparency = 1
-    btn.Text = ""
-    btn.Parent = track
-
-    return track, knob, btn
-end
-
--- ============ TOGGLES SECTION ============
-local togglesSection = Instance.new("Frame")
-togglesSection.Size = UDim2.new(1, -40, 0, 90)
-togglesSection.Position = UDim2.new(0, 20, 0, 152)
-togglesSection.BackgroundTransparency = 1
-togglesSection.Parent = content
-
-local autoRow = Instance.new("Frame")
-autoRow.Size = UDim2.new(1, 0, 0, 36)
-autoRow.Position = UDim2.new(0, 0, 0, 0)
-autoRow.BackgroundTransparency = 1
-autoRow.Parent = togglesSection
-
-local autoLabel = Instance.new("TextLabel")
-autoLabel.Size = UDim2.new(1, -50, 1, 0)
-autoLabel.BackgroundTransparency = 1
-autoLabel.Text = "auto-sync"
-autoLabel.TextColor3 = COLORS.subtext0
-autoLabel.TextXAlignment = Enum.TextXAlignment.Left
-autoLabel.Font = Enum.Font.Gotham
-autoLabel.TextSize = 13
-autoLabel.Parent = autoRow
-
-local autoTrack, autoKnob, autoToggle = createSliderToggle(autoRow, 8, true)
-
-local scriptsRow = Instance.new("Frame")
-scriptsRow.Size = UDim2.new(1, 0, 0, 36)
-scriptsRow.Position = UDim2.new(0, 0, 0, 40)
-scriptsRow.BackgroundTransparency = 1
-scriptsRow.Parent = togglesSection
-
-local scriptsLabel = Instance.new("TextLabel")
-scriptsLabel.Size = UDim2.new(1, -50, 1, 0)
-scriptsLabel.BackgroundTransparency = 1
-scriptsLabel.Text = "scripts only"
-scriptsLabel.TextColor3 = COLORS.subtext0
-scriptsLabel.TextXAlignment = Enum.TextXAlignment.Left
-scriptsLabel.Font = Enum.Font.Gotham
-scriptsLabel.TextSize = 13
-scriptsLabel.Parent = scriptsRow
-
-local scriptsTrack, scriptsKnob, scriptsToggle = createSliderToggle(scriptsRow, 8, false)
+-- (toggles removed - auto-sync always on, full tree mode)
 
 -- ============ SEPARATOR ============
 local sep3 = Instance.new("Frame")
 sep3.Size = UDim2.new(1, -40, 0, 1)
-sep3.Position = UDim2.new(0, 20, 0, 248)
+sep3.Position = UDim2.new(0, 20, 0, 92)
 sep3.BackgroundColor3 = COLORS.surface1
 sep3.BackgroundTransparency = 0.6
 sep3.BorderSizePixel = 0
@@ -1077,7 +900,7 @@ sep3.Parent = content
 -- ============ ACTIVITY LOG ============
 local logLabel = Instance.new("TextLabel")
 logLabel.Size = UDim2.new(1, -40, 0, 24)
-logLabel.Position = UDim2.new(0, 20, 0, 256)
+logLabel.Position = UDim2.new(0, 20, 0, 100)
 logLabel.BackgroundTransparency = 1
 logLabel.Text = "--- activity ---"
 logLabel.TextColor3 = COLORS.overlay0
@@ -1087,8 +910,8 @@ logLabel.TextSize = 10
 logLabel.Parent = content
 
 local logFrame = Instance.new("ScrollingFrame")
-logFrame.Size = UDim2.new(1, -40, 1, -288)
-logFrame.Position = UDim2.new(0, 20, 0, 280)
+logFrame.Size = UDim2.new(1, -40, 1, -132)
+logFrame.Position = UDim2.new(0, 20, 0, 124)
 logFrame.BackgroundColor3 = COLORS.mantle
 logFrame.BorderSizePixel = 0
 logFrame.ScrollBarThickness = 2
@@ -2495,7 +2318,6 @@ end
 
 local function doSync(projectName)
     syncing = true
-    syncBtn.Text = "syncing..."
 
     projectInput.Text = projectName
 
@@ -2573,7 +2395,6 @@ local function doSync(projectName)
         end
 
         task.delay(0.5, hideProgress)
-        syncBtn.Text = "sync"
         syncing = false
     end)
 end
@@ -2604,7 +2425,6 @@ local function pullFromServer()
     end
 
     syncing = true
-    pullBtn.Text = "pulling..."
     log("Checking for changes...", COLORS.logInfo)
 
     task.spawn(function()
@@ -2623,7 +2443,6 @@ local function pullFromServer()
             log("Pull failed: " .. tostring(err), COLORS.logError)
         end
 
-        pullBtn.Text = "pull"
         syncing = false
     end)
 end
@@ -2691,6 +2510,7 @@ connectBtn.MouseButton1Click:Connect(function()
         end)
     else
         log("Connecting...", COLORS.logInfo)
+        connectBtn.Text = "..."
         local projectName = getProjectName()
         local data, err = request("POST", "/studio-connect", {
             project = projectName,
@@ -2705,42 +2525,15 @@ connectBtn.MouseButton1Click:Connect(function()
             if projectName then
                 log("Project: " .. projectName, COLORS.logInfo)
             end
+            -- auto-sync on connect
+            syncToServer()
         else
             connected = false
             updateStatus("Disconnected", false)
+            connectBtn.Text = "connect"
             log("Connection failed - is server running?", COLORS.logError)
         end
     end
-end)
-
-syncBtn.MouseButton1Click:Connect(function()
-    if not connected then
-        log("connecting...", COLORS.logInfo)
-        local projectName = getProjectName()
-        local data, err = request("POST", "/studio-connect", {
-            project = projectName,
-            placeId = game.PlaceId,
-            placeName = game.Name
-        }, 10)
-
-        if data and data.status == "ok" then
-            connected = true
-            updateStatus("connected", true, "ready")
-            log("connected to server", COLORS.logSuccess)
-        else
-            log("connection failed - is server running?", COLORS.logError)
-            return
-        end
-    end
-    syncToServer()
-end)
-
-pullBtn.MouseButton1Click:Connect(function()
-    if not connected and not checkConnection() then
-        log("not connected", COLORS.logError)
-        return
-    end
-    pullFromServer()
 end)
 
 -- ============ IMPORT STRUCTURE FUNCTIONALITY ============
@@ -2974,43 +2767,6 @@ function applyStructureChange(change)
         return false, "Unknown change type: " .. tostring(change.type)
     end
 end
-
--- ============ SLIDER TOGGLE HANDLERS ============
-autoToggle.MouseButton1Click:Connect(function()
-    autoSync = not autoSync
-
-    if autoSync then
-        tweenProperty(autoTrack, {BackgroundColor3 = COLORS.accent}, TWEEN_SMOOTH)
-        tweenProperty(autoKnob, {Position = UDim2.new(1, -18, 0.5, -8)}, TWEEN_SMOOTH)
-        autoLabel.TextColor3 = COLORS.text
-        tweenProperty(syncBtn, {Position = UDim2.new(0.5, -50, 0, 76)}, TWEEN_SMOOTH)
-        pullBtn.Visible = false
-        log("auto-sync enabled", COLORS.logSuccess)
-    else
-        tweenProperty(autoTrack, {BackgroundColor3 = COLORS.surface1}, TWEEN_SMOOTH)
-        tweenProperty(autoKnob, {Position = UDim2.new(0, 2, 0.5, -8)}, TWEEN_SMOOTH)
-        autoLabel.TextColor3 = COLORS.subtext0
-        tweenProperty(syncBtn, {Position = UDim2.new(0.5, -104, 0, 76)}, TWEEN_SMOOTH)
-        pullBtn.Visible = true
-        log("auto-sync disabled", COLORS.logDefault)
-    end
-end)
-
-scriptsToggle.MouseButton1Click:Connect(function()
-    scriptsOnlyMode = not scriptsOnlyMode
-
-    if scriptsOnlyMode then
-        tweenProperty(scriptsTrack, {BackgroundColor3 = COLORS.peach}, TWEEN_SMOOTH)
-        tweenProperty(scriptsKnob, {Position = UDim2.new(1, -18, 0.5, -8)}, TWEEN_SMOOTH)
-        scriptsLabel.TextColor3 = COLORS.text
-        log("scripts only mode on", COLORS.logWarning)
-    else
-        tweenProperty(scriptsTrack, {BackgroundColor3 = COLORS.surface1}, TWEEN_SMOOTH)
-        tweenProperty(scriptsKnob, {Position = UDim2.new(0, 2, 0.5, -8)}, TWEEN_SMOOTH)
-        scriptsLabel.TextColor3 = COLORS.subtext0
-        log("scripts only mode off", COLORS.logDefault)
-    end
-end)
 
 -- ============ MAIN LOOP ============
 
