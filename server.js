@@ -363,6 +363,7 @@ let ws = null;
 let hb = null;
 let sp = null;
 let lastStatus = "";
+let verified = false;
 
 async function bridgeConnect() {
   if (!config.token) {
@@ -370,22 +371,25 @@ async function bridgeConnect() {
     return;
   }
 
-  // verify license before connecting
-  console.log(`  Verifying license...`);
-  try {
-    const verifyUrl = config.server.replace("wss://", "https://").replace("ws://", "http://").replace("/bridge", "");
-    const vRes = await fetch(`${verifyUrl}/api/bridge/verify?token=${encodeURIComponent(config.token)}`);
-    const vData = await vRes.json();
-    if (vData.valid === false) {
-      console.log(`\n  ACCESS DENIED: ${vData.reason}\n`);
-      console.log("  Log in to reagent-ai.vercel.app and subscribe to a plan.\n");
-      setTimeout(bridgeConnect, 30000); // retry in 30s in case they subscribe
-      return;
+  // verify license only on first connect
+  if (!verified) {
+    console.log(`  Verifying license...`);
+    try {
+      const verifyUrl = config.server.replace("wss://", "https://").replace("ws://", "http://").replace("/bridge", "");
+      const vRes = await fetch(`${verifyUrl}/api/bridge/verify?token=${encodeURIComponent(config.token)}`);
+      const vData = await vRes.json();
+      if (vData.valid === false) {
+        console.log(`\n  ACCESS DENIED: ${vData.reason}\n`);
+        console.log("  Log in to reagent-ai.vercel.app and subscribe to a plan.\n");
+        setTimeout(bridgeConnect, 30000);
+        return;
+      }
+      console.log(`  License valid (${vData.plan || "free"} plan)`);
+      verified = true;
+    } catch {
+      console.log("  Could not verify (server unreachable). Connecting anyway...");
+      verified = true;
     }
-    console.log(`  License valid (${vData.plan} plan)`);
-  } catch {
-    // can't reach server — try connecting anyway (offline tolerance)
-    console.log("  Could not verify license (server unreachable). Trying to connect...");
   }
 
   console.log(`  Connecting to Reagent cloud...`);
