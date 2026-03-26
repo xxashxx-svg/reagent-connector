@@ -11,13 +11,12 @@ import WebSocket from "ws";
 import readline from "readline";
 
 const VERSION = "1.0.0";
-const PORT = 34872;
 const BRIDGE_HEARTBEAT = 30000;
 const STATUS_POLL = 5000;
 
 // ---- config ----
 const CONFIG_PATH = path.join(process.cwd(), "config.json");
-let config = { token: "", server: "wss://reagent-server-small-shape-4547.fly.dev/bridge" };
+let config = { token: "", server: "wss://reagent-server-small-shape-4547.fly.dev/bridge", port: 34873 };
 try {
   if (fs.existsSync(CONFIG_PATH)) config = { ...config, ...JSON.parse(fs.readFileSync(CONFIG_PATH, "utf-8")) };
 } catch {}
@@ -28,6 +27,8 @@ const args = Object.fromEntries(
 );
 if (args.token) config.token = args.token;
 if (args.server) config.server = args.server;
+if (args.port) config.port = parseInt(args.port);
+const PORT = config.port || 34873;
 
 // ---- project paths ----
 const ROOT_DIR = process.cwd();
