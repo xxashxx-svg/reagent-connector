@@ -8,6 +8,7 @@ import crypto from "crypto";
 import { EventEmitter } from "events";
 import chokidar from "chokidar";
 import WebSocket from "ws";
+import readline from "readline";
 
 const VERSION = "1.0.0";
 const PORT = 34872;
@@ -365,10 +366,36 @@ let sp = null;
 let lastStatus = "";
 let verified = false;
 
+async function askForToken() {
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  return new Promise((resolve) => {
+    console.log("\n  No bridge token found.");
+    console.log("  Get your token from reagent-ai.vercel.app → Settings → Bridge Token\n");
+    rl.question("  Paste your token here: ", (answer) => {
+      rl.close();
+      const token = answer.trim();
+      if (token) {
+        config.token = token;
+        // save to config.json so they don't have to enter it again
+        try {
+          const cfg = fs.existsSync(CONFIG_PATH) ? JSON.parse(fs.readFileSync(CONFIG_PATH, "utf-8")) : {};
+          cfg.token = token;
+          fs.writeFileSync(CONFIG_PATH, JSON.stringify(cfg, null, 2));
+          console.log("  Token saved to config.json\n");
+        } catch {}
+      }
+      resolve(token);
+    });
+  });
+}
+
 async function bridgeConnect() {
   if (!config.token) {
-    console.log("  No bridge token set. Run with --token=YOUR_TOKEN or set it in config.json");
-    return;
+    const token = await askForToken();
+    if (!token) {
+      console.log("  No token provided. Exiting.");
+      return;
+    }
   }
 
   // verify license only on first connect
