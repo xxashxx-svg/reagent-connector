@@ -5,7 +5,9 @@ echo   Reagent Connector
 echo.
 if not exist node_modules (
     echo   Installing dependencies...
-    npm install --silent
+    call npm install --silent
+    echo.
+    echo   Dependencies installed!
     echo.
 )
 node server.js %*
