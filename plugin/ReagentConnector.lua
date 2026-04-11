@@ -18,7 +18,7 @@ local Selection = game:GetService("Selection")
 -- config
 local SERVER_URL = "http://localhost:34873"
 local POLL_INTERVAL = 0.5
-local VERSION = "1.0.0"
+local VERSION = "1.6.0"
 local REQUEST_TIMEOUT = 30
 
 local SYNC_SERVICES = {

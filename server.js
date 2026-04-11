@@ -10,7 +10,7 @@ import chokidar from "chokidar";
 import WebSocket from "ws";
 import readline from "readline";
 
-const VERSION = "1.0.0";
+const VERSION = "1.6.0";
 const BRIDGE_HEARTBEAT = 30000;
 const STATUS_POLL = 5000;
 
@@ -140,7 +140,7 @@ function installPlugin() {
   try {
     ensureDir(pluginsDir);
     fs.copyFileSync(localPlugin, path.join(pluginsDir, "ReagentConnector.lua"));
-    console.log("  Plugin installed to Roblox Plugins folder");
+    console.log("  ✓ Plugin installed");
   } catch (err) {
     console.log("  Could not install plugin:", err.message);
   }
@@ -175,7 +175,7 @@ app.get("/ping", (_, res) => {
 app.post("/studio-connect", (req, res) => {
   const { project, placeId, placeName } = req.body;
   connectedStudios.set(placeId || Date.now(), { project: project || "Unknown", placeName: placeName || "Unknown", connectedAt: new Date().toISOString() });
-  console.log(`\n  Studio connected: ${project || "Unknown"} (${placeName || "Unknown"})\n`);
+  console.log(`\n  ✓ Studio connected: ${project || "Unknown"}\n`);
   res.json({ status: "ok", message: "Connected", connectedStudios: connectedStudios.size });
 });
 
@@ -371,7 +371,7 @@ async function askForToken() {
   const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
   return new Promise((resolve) => {
     console.log("\n  No bridge token found.");
-    console.log("  Get your token from reagent-ai.vercel.app → Settings → Bridge Token\n");
+    console.log("  Get it from reagent-ai.vercel.app → Settings → Connection\n");
     rl.question("  Paste your token here: ", (answer) => {
       rl.close();
       const token = answer.trim();
@@ -412,7 +412,7 @@ async function bridgeConnect() {
         setTimeout(bridgeConnect, 30000);
         return;
       }
-      console.log(`  License valid (${vData.plan || "free"} plan)`);
+      console.log(`  ✓ License valid (${vData.plan || "free"} plan)`);
       verified = true;
     } catch {
       console.log("  Could not verify (server unreachable). Connecting anyway...");
@@ -424,7 +424,7 @@ async function bridgeConnect() {
   ws = new WebSocket(config.server, { headers: { authorization: `Bearer ${config.token}` } });
 
   ws.on("open", async () => {
-    console.log("  Connected to Reagent cloud!");
+    console.log("  ✓ Connected to Reagent cloud");
     const projects = getActiveProjects();
     ws.send(JSON.stringify({ type: "status", lualinkConnected: true, projects }));
 
@@ -514,8 +514,12 @@ ensureDir(PROJECTS_DIR);
 installPlugin();
 
 app.listen(PORT, () => {
-  console.log(`\n  Reagent Connector v${VERSION}`);
-  console.log(`  Port: ${PORT}\n`);
+  console.log(``);
+  console.log(`  ╭─────────────────────────────╮`);
+  console.log(`  │  Reagent Connector v${VERSION}   │`);
+  console.log(`  ╰─────────────────────────────╯`);
+  console.log(`  Port ${PORT}`)
+  console.log(``);
   bridgeConnect();
 });
 
