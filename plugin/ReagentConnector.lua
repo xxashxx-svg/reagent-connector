@@ -761,23 +761,11 @@ setmetatable(projectInput, {
 local cloudBadge = { BackgroundColor3 = COLORS.accent }
 
 -- logFrame: used by log() function — keep as dummy
-local logFrame = Instance.new("Frame")
+local logFrame = Instance.new("ScrollingFrame")
 logFrame.Visible = false
+logFrame.Size = UDim2.new(0, 0, 0, 0)
+logFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
 logFrame.Parent = main
-logFrame.AbsoluteCanvasSize = Vector2.new(0, 0)
-logFrame.CanvasPosition = Vector2.new(0, 0)
--- add fake properties for ScrollingFrame compat
-local _fakeMeta = {}
-setmetatable(logFrame, {
-    __index = function(t, k)
-        if k == "AbsoluteCanvasSize" then return Vector2.new(0, 0) end
-        if k == "CanvasPosition" then return Vector2.new(0, 0) end
-        return _fakeMeta[k]
-    end,
-    __newindex = function(t, k, v)
-        _fakeMeta[k] = v
-    end
-})
 
 -- hidden compat refs
 local statusText = Instance.new("TextLabel")
