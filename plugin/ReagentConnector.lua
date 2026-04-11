@@ -611,172 +611,175 @@ local function tweenProperty(obj, props, tweenInfo)
     return tween
 end
 
--- main frame
+-- ============ MINIMAL UI (Rojo-inspired) ============
+
 local main = Instance.new("Frame")
 main.Size = UDim2.new(1, 0, 1, 0)
 main.BackgroundColor3 = COLORS.bg
 main.BorderSizePixel = 0
 main.Parent = widget
 
--- ============ HEADER ============
+
+-- ============ HEADER (minimal) ============
 local header = Instance.new("Frame")
-header.Size = UDim2.new(1, 0, 0, 52)
-header.BackgroundColor3 = COLORS.base
+header.Size = UDim2.new(1, 0, 0, 44)
+header.BackgroundColor3 = COLORS.mantle
 header.BorderSizePixel = 0
 header.Parent = main
 
-local headerSep = Instance.new("Frame")
-headerSep.Size = UDim2.new(1, 0, 0, 1)
-headerSep.Position = UDim2.new(0, 0, 1, -1)
-headerSep.BackgroundColor3 = COLORS.accent
-headerSep.BackgroundTransparency = 0.6
-headerSep.BorderSizePixel = 0
-headerSep.Parent = header
-
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(0, 120, 0, 52)
-title.Position = UDim2.new(0, 16, 0, 0)
+title.Size = UDim2.new(0, 100, 1, 0)
+title.Position = UDim2.new(0, 14, 0, 0)
 title.BackgroundTransparency = 1
-title.Text = "reagent"
-title.TextColor3 = COLORS.accent
+title.Text = "Reagent"
+title.TextColor3 = COLORS.text
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Font = Enum.Font.GothamBold
-title.TextSize = 16
+title.TextSize = 15
 title.Parent = header
 
 local versionLabel = Instance.new("TextLabel")
-versionLabel.Size = UDim2.new(0, 40, 0, 52)
-versionLabel.Position = UDim2.new(0, 92, 0, 0)
+versionLabel.Size = UDim2.new(0, 50, 1, 0)
+versionLabel.Position = UDim2.new(1, -60, 0, 0)
 versionLabel.BackgroundTransparency = 1
 versionLabel.Text = "v" .. VERSION
 versionLabel.TextColor3 = COLORS.overlay0
-versionLabel.TextXAlignment = Enum.TextXAlignment.Left
+versionLabel.TextXAlignment = Enum.TextXAlignment.Right
 versionLabel.Font = Enum.Font.Gotham
 versionLabel.TextSize = 10
 versionLabel.Parent = header
 
--- cloud ai badge
-local cloudBadge = Instance.new("Frame")
-cloudBadge.Size = UDim2.new(0, 68, 0, 20)
-cloudBadge.Position = UDim2.new(1, -80, 0.5, -10)
-cloudBadge.BackgroundColor3 = COLORS.accent
-cloudBadge.BackgroundTransparency = 0.85
-cloudBadge.BorderSizePixel = 0
-cloudBadge.Parent = header
-
-local cloudBadgeCorner = Instance.new("UICorner")
-cloudBadgeCorner.CornerRadius = UDim.new(0, 10)
-cloudBadgeCorner.Parent = cloudBadge
-
-local cloudBadgeStroke = Instance.new("UIStroke")
-cloudBadgeStroke.Color = COLORS.accent
-cloudBadgeStroke.Thickness = 1
-cloudBadgeStroke.Transparency = 0.5
-cloudBadgeStroke.Parent = cloudBadge
-
-local cloudBadgeText = Instance.new("TextLabel")
-cloudBadgeText.Size = UDim2.new(1, 0, 1, 0)
-cloudBadgeText.BackgroundTransparency = 1
-cloudBadgeText.Text = "Cloud AI"
-cloudBadgeText.TextColor3 = COLORS.accent
-cloudBadgeText.Font = Enum.Font.GothamBold
-cloudBadgeText.TextSize = 9
-cloudBadgeText.Parent = cloudBadge
-
--- ============ SEPARATOR HELPER ============
-local function createSeparator(parent, posY)
-    local sep = Instance.new("Frame")
-    sep.Size = UDim2.new(1, -40, 0, 1)
-    sep.Position = UDim2.new(0, 20, 0, posY)
-    sep.BackgroundColor3 = COLORS.surface1
-    sep.BackgroundTransparency = 0.5
-    sep.BorderSizePixel = 0
-    sep.Parent = parent
-    return sep
-end
-
--- ============ CONTENT AREA ============
+-- ============ CONTENT ============
 local content = Instance.new("Frame")
-content.Size = UDim2.new(1, 0, 1, -52)
-content.Position = UDim2.new(0, 0, 0, 52)
+content.Size = UDim2.new(1, 0, 1, -44)
+content.Position = UDim2.new(0, 0, 0, 44)
 content.BackgroundTransparency = 1
 content.BorderSizePixel = 0
 content.Parent = main
 
--- ============ PROJECT CARD ============
-local projectCard = Instance.new("Frame")
-projectCard.Size = UDim2.new(1, -40, 0, 44)
-projectCard.Position = UDim2.new(0, 20, 0, 16)
-projectCard.BackgroundColor3 = COLORS.surface0
-projectCard.BorderSizePixel = 0
-projectCard.Parent = content
+-- status section
+local statusSection = Instance.new("Frame")
+statusSection.Size = UDim2.new(1, -28, 0, 56)
+statusSection.Position = UDim2.new(0, 14, 0, 14)
+statusSection.BackgroundColor3 = COLORS.surface0
+statusSection.BackgroundTransparency = 0.4
+statusSection.BorderSizePixel = 0
+statusSection.Parent = content
 
-local projectCardCorner = Instance.new("UICorner")
-projectCardCorner.CornerRadius = UDim.new(0, 8)
-projectCardCorner.Parent = projectCard
-
-local projectInput = Instance.new("TextBox")
-projectInput.Size = UDim2.new(1, -90, 1, 0)
-projectInput.Position = UDim2.new(0, 30, 0, 0)
-projectInput.BackgroundTransparency = 1
-projectInput.Text = ""
-projectInput.PlaceholderText = "project name..."
-projectInput.PlaceholderColor3 = COLORS.overlay0
-projectInput.TextColor3 = COLORS.text
-projectInput.TextXAlignment = Enum.TextXAlignment.Left
-projectInput.Font = Enum.Font.Gotham
-projectInput.TextSize = 13
-projectInput.ClearTextOnFocus = false
-projectInput.Parent = projectCard
-
--- connect button
-local connectBtn = Instance.new("TextButton")
-connectBtn.Size = UDim2.new(0, 70, 0, 28)
-connectBtn.Position = UDim2.new(1, -80, 0.5, -14)
-connectBtn.BackgroundColor3 = COLORS.surface1
-connectBtn.BorderSizePixel = 0
-connectBtn.Text = "connect"
-connectBtn.TextColor3 = COLORS.text
-connectBtn.Font = Enum.Font.Gotham
-connectBtn.TextSize = 12
-connectBtn.AutoButtonColor = false
-connectBtn.Parent = projectCard
-
-local connectBtnCorner = Instance.new("UICorner")
-connectBtnCorner.CornerRadius = UDim.new(0, 6)
-connectBtnCorner.Parent = connectBtn
-
-local connectBtnStroke = Instance.new("UIStroke")
-connectBtnStroke.Color = COLORS.surface2
-connectBtnStroke.Thickness = 1
-connectBtnStroke.Parent = connectBtn
+local statusCorner = Instance.new("UICorner")
+statusCorner.CornerRadius = UDim.new(0, 8)
+statusCorner.Parent = statusSection
 
 -- status dot
 local statusDot = Instance.new("Frame")
 statusDot.Size = UDim2.new(0, 8, 0, 8)
-statusDot.Position = UDim2.new(0, 14, 0.5, -4)
+statusDot.Position = UDim2.new(0, 14, 0, 14)
 statusDot.BackgroundColor3 = COLORS.red
 statusDot.BorderSizePixel = 0
 statusDot.ZIndex = 2
-statusDot.Parent = projectCard
+statusDot.Parent = statusSection
 
 local statusDotCorner = Instance.new("UICorner")
 statusDotCorner.CornerRadius = UDim.new(1, 0)
 statusDotCorner.Parent = statusDot
 
+-- status text
+local statusLabel = Instance.new("TextLabel")
+statusLabel.Size = UDim2.new(1, -36, 0, 16)
+statusLabel.Position = UDim2.new(0, 30, 0, 10)
+statusLabel.BackgroundTransparency = 1
+statusLabel.Text = "Disconnected"
+statusLabel.TextColor3 = COLORS.overlay1
+statusLabel.TextXAlignment = Enum.TextXAlignment.Left
+statusLabel.Font = Enum.Font.GothamMedium
+statusLabel.TextSize = 12
+statusLabel.Parent = statusSection
+
+-- project name display
+local projectLabel = Instance.new("TextLabel")
+projectLabel.Size = UDim2.new(1, -36, 0, 14)
+projectLabel.Position = UDim2.new(0, 30, 0, 30)
+projectLabel.BackgroundTransparency = 1
+projectLabel.Text = ""
+projectLabel.TextColor3 = COLORS.overlay0
+projectLabel.TextXAlignment = Enum.TextXAlignment.Left
+projectLabel.Font = Enum.Font.Gotham
+projectLabel.TextSize = 11
+projectLabel.Parent = statusSection
+
+-- connect/disconnect button
+local connectBtn = Instance.new("TextButton")
+connectBtn.Size = UDim2.new(1, -28, 0, 36)
+connectBtn.Position = UDim2.new(0, 14, 0, 80)
+connectBtn.BackgroundColor3 = COLORS.accent
+connectBtn.BorderSizePixel = 0
+connectBtn.Text = "Connect"
+connectBtn.TextColor3 = COLORS.crust
+connectBtn.Font = Enum.Font.GothamBold
+connectBtn.TextSize = 13
+connectBtn.AutoButtonColor = false
+connectBtn.Parent = content
+
+local connectBtnCorner = Instance.new("UICorner")
+connectBtnCorner.CornerRadius = UDim.new(0, 8)
+connectBtnCorner.Parent = connectBtn
+
 connectBtn.MouseEnter:Connect(function()
-    tweenProperty(connectBtn, {BackgroundColor3 = COLORS.surface2}, TWEEN_FAST)
+    tweenProperty(connectBtn, {BackgroundColor3 = COLORS.accentHover}, TWEEN_FAST)
 end)
 
 connectBtn.MouseLeave:Connect(function()
     if connected then
-        tweenProperty(connectBtn, {BackgroundColor3 = COLORS.surface0}, TWEEN_FAST)
-    else
         tweenProperty(connectBtn, {BackgroundColor3 = COLORS.surface1}, TWEEN_FAST)
+    else
+        tweenProperty(connectBtn, {BackgroundColor3 = COLORS.accent}, TWEEN_FAST)
     end
 end)
 
--- hidden compat labels
+-- ============ COMPAT SHIMS (keep old variable names for backend code) ============
+
+-- projectInput: backend reads/writes .Text for project name
+local projectInput = { Text = "" }
+setmetatable(projectInput, {
+    __index = function(t, k)
+        if k == "Text" then return rawget(t, "_text") or "" end
+        return nil
+    end,
+    __newindex = function(t, k, v)
+        if k == "Text" then
+            rawset(t, "_text", v)
+            if v and v ~= "" then
+                projectLabel.Text = v
+            else
+                projectLabel.Text = ""
+            end
+        end
+    end
+})
+
+-- cloudBadge: backend sets BackgroundColor3 on connect/disconnect
+local cloudBadge = { BackgroundColor3 = COLORS.accent }
+
+-- logFrame: used by log() function — keep as dummy
+local logFrame = Instance.new("Frame")
+logFrame.Visible = false
+logFrame.Parent = main
+logFrame.AbsoluteCanvasSize = Vector2.new(0, 0)
+logFrame.CanvasPosition = Vector2.new(0, 0)
+-- add fake properties for ScrollingFrame compat
+local _fakeMeta = {}
+setmetatable(logFrame, {
+    __index = function(t, k)
+        if k == "AbsoluteCanvasSize" then return Vector2.new(0, 0) end
+        if k == "CanvasPosition" then return Vector2.new(0, 0) end
+        return _fakeMeta[k]
+    end,
+    __newindex = function(t, k, v)
+        _fakeMeta[k] = v
+    end
+})
+
+-- hidden compat refs
 local statusText = Instance.new("TextLabel")
 statusText.Size = UDim2.new(0, 0, 0, 0)
 statusText.BackgroundTransparency = 1
@@ -791,432 +794,67 @@ statsLabel.Text = ""
 statsLabel.Visible = false
 statsLabel.Parent = content
 
--- (sync/pull buttons removed - connect auto-syncs)
+local projectInputBar = content
 
--- ============ PROGRESS BAR ============
+-- progress: keep functions as no-ops
 local progressFrame = Instance.new("Frame")
-progressFrame.Size = UDim2.new(1, -40, 0, 4)
-progressFrame.Position = UDim2.new(0, 20, 0, 76)
-progressFrame.BackgroundColor3 = COLORS.surface0
-progressFrame.BorderSizePixel = 0
 progressFrame.Visible = false
-progressFrame.Parent = content
-
-local progressCorner = Instance.new("UICorner")
-progressCorner.CornerRadius = UDim.new(0, 4)
-progressCorner.Parent = progressFrame
+progressFrame.Size = UDim2.new(0, 0, 0, 0)
+progressFrame.Parent = main
 
 local progressBar = Instance.new("Frame")
-progressBar.Size = UDim2.new(0, 0, 1, 0)
-progressBar.BackgroundColor3 = COLORS.accent
-progressBar.BorderSizePixel = 0
+progressBar.Size = UDim2.new(0, 0, 0, 0)
 progressBar.Parent = progressFrame
 
-local progressBarCorner = Instance.new("UICorner")
-progressBarCorner.CornerRadius = UDim.new(0, 4)
-progressBarCorner.Parent = progressBar
-
 local progressText = Instance.new("TextLabel")
-progressText.Size = UDim2.new(1, 0, 0, 0)
-progressText.BackgroundTransparency = 1
 progressText.Text = ""
-progressText.TextColor3 = COLORS.text
-progressText.Font = Enum.Font.Gotham
-progressText.TextSize = 10
-progressText.ZIndex = 2
 progressText.Visible = false
 progressText.Parent = progressFrame
 
 local progressTarget = 0
 local progressCurrent = 0
 local progressMessage = ""
-local progressConnection = nil
 
-local function updateProgressBar()
-    local pct = math.clamp(progressCurrent, 0, 100)
-    progressBar.Size = UDim2.new(pct / 100, 0, 1, 0)
-    if progressMessage ~= "" then
-        progressText.Text = progressMessage
-    else
-        progressText.Text = math.floor(pct) .. "%"
-    end
-end
+local function updateProgressBar() end
+local function startProgressAnimation() end
+local function stopProgressAnimation() end
+local function showProgress(percent, text) end
+local function hideProgress() end
+local function completeProgress() end
 
-local function startProgressAnimation()
-    if progressConnection then return end
-    progressConnection = RunService.Heartbeat:Connect(function(dt)
-        if progressCurrent < progressTarget then
-            local diff = progressTarget - progressCurrent
-            local speed = math.max(diff * 0.8, 0.5)
-            progressCurrent = math.min(progressCurrent + speed * dt * 10, progressTarget)
-            updateProgressBar()
-        end
-    end)
-end
-
-local function stopProgressAnimation()
-    if progressConnection then
-        progressConnection:Disconnect()
-        progressConnection = nil
-    end
-end
-
-local function showProgress(percent, text)
-    progressFrame.Visible = true
-    progressTarget = math.clamp(percent, 0, 100)
-    progressMessage = text or ""
-    startProgressAnimation()
-    updateProgressBar()
-end
-
-local function hideProgress()
-    stopProgressAnimation()
-    progressFrame.Visible = false
-    progressBar.Size = UDim2.new(0, 0, 1, 0)
-    progressText.Text = "0%"
-    progressTarget = 0
-    progressCurrent = 0
-    progressMessage = ""
-end
-
-local function completeProgress()
-    progressTarget = 100
-    progressCurrent = 100
-    progressMessage = "Done!"
-    updateProgressBar()
-end
-
--- (toggles removed - auto-sync always on, full tree mode)
-
--- ============ SEPARATOR ============
-local sep3 = Instance.new("Frame")
-sep3.Size = UDim2.new(1, -40, 0, 1)
-sep3.Position = UDim2.new(0, 20, 0, 92)
-sep3.BackgroundColor3 = COLORS.surface1
-sep3.BackgroundTransparency = 0.6
-sep3.BorderSizePixel = 0
-sep3.Parent = content
-
--- ============ ACTIVITY LOG ============
-local logLabel = Instance.new("TextLabel")
-logLabel.Size = UDim2.new(1, -40, 0, 24)
-logLabel.Position = UDim2.new(0, 20, 0, 100)
-logLabel.BackgroundTransparency = 1
-logLabel.Text = "--- activity ---"
-logLabel.TextColor3 = COLORS.overlay0
-logLabel.TextXAlignment = Enum.TextXAlignment.Center
-logLabel.Font = Enum.Font.Gotham
-logLabel.TextSize = 10
-logLabel.Parent = content
-
-local logFrame = Instance.new("ScrollingFrame")
-logFrame.Size = UDim2.new(1, -40, 1, -132)
-logFrame.Position = UDim2.new(0, 20, 0, 124)
-logFrame.BackgroundColor3 = COLORS.mantle
-logFrame.BorderSizePixel = 0
-logFrame.ScrollBarThickness = 2
-logFrame.ScrollBarImageColor3 = COLORS.surface1
-logFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
-logFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
-logFrame.Parent = content
-
-local logCorner = Instance.new("UICorner")
-logCorner.CornerRadius = UDim.new(0, 8)
-logCorner.Parent = logFrame
-
-local logLayout = Instance.new("UIListLayout")
-logLayout.SortOrder = Enum.SortOrder.LayoutOrder
-logLayout.Padding = UDim.new(0, 2)
-logLayout.Parent = logFrame
-
-local logPadding = Instance.new("UIPadding")
-logPadding.PaddingLeft = UDim.new(0, 10)
-logPadding.PaddingRight = UDim.new(0, 10)
-logPadding.PaddingTop = UDim.new(0, 8)
-logPadding.PaddingBottom = UDim.new(0, 8)
-logPadding.Parent = logFrame
-
--- compat refs
-local projectInputBar = content
-
--- ============ PROJECT NAME DIALOG ============
-
+-- dialog: keep functions as no-ops, auto-generate project names instead
 local dialogOverlay = Instance.new("Frame")
-dialogOverlay.Size = UDim2.new(1, 0, 1, 0)
-dialogOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-dialogOverlay.BackgroundTransparency = 0.5
-dialogOverlay.BorderSizePixel = 0
 dialogOverlay.Visible = false
-dialogOverlay.ZIndex = 10
 dialogOverlay.Parent = main
-
-local dialogBox = Instance.new("Frame")
-dialogBox.Size = UDim2.new(0, 240, 0, 160)
-dialogBox.Position = UDim2.new(0.5, -120, 0.5, -80)
-dialogBox.BackgroundColor3 = COLORS.bgLight
-dialogBox.BorderSizePixel = 0
-dialogBox.ZIndex = 11
-dialogBox.Parent = dialogOverlay
-
-local dialogCorner = Instance.new("UICorner")
-dialogCorner.CornerRadius = UDim.new(0, 12)
-dialogCorner.Parent = dialogBox
-
-local dialogTitle = Instance.new("TextLabel")
-dialogTitle.Size = UDim2.new(1, -20, 0, 24)
-dialogTitle.Position = UDim2.new(0, 10, 0, 12)
-dialogTitle.BackgroundTransparency = 1
-dialogTitle.Text = "Enter Project Name"
-dialogTitle.TextColor3 = COLORS.text
-dialogTitle.Font = Enum.Font.GothamBold
-dialogTitle.TextSize = 14
-dialogTitle.ZIndex = 12
-dialogTitle.Parent = dialogBox
-
-local dialogDesc = Instance.new("TextLabel")
-dialogDesc.Size = UDim2.new(1, -20, 0, 30)
-dialogDesc.Position = UDim2.new(0, 10, 0, 38)
-dialogDesc.BackgroundTransparency = 1
-dialogDesc.Text = "This place is unsaved. Please enter a name for your project:"
-dialogDesc.TextColor3 = COLORS.textDim
-dialogDesc.Font = Enum.Font.Gotham
-dialogDesc.TextSize = 11
-dialogDesc.TextWrapped = true
-dialogDesc.ZIndex = 12
-dialogDesc.Parent = dialogBox
-
-local dialogInput = Instance.new("TextBox")
-dialogInput.Size = UDim2.new(1, -20, 0, 32)
-dialogInput.Position = UDim2.new(0, 10, 0, 74)
-dialogInput.BackgroundColor3 = COLORS.bg
-dialogInput.BorderSizePixel = 0
-dialogInput.Text = ""
-dialogInput.PlaceholderText = "MyProject"
-dialogInput.PlaceholderColor3 = COLORS.textDim
-dialogInput.TextColor3 = COLORS.text
-dialogInput.Font = Enum.Font.GothamMedium
-dialogInput.TextSize = 13
-dialogInput.ClearTextOnFocus = false
-dialogInput.ZIndex = 12
-dialogInput.Parent = dialogBox
-
-local dialogInputCorner = Instance.new("UICorner")
-dialogInputCorner.CornerRadius = UDim.new(0, 6)
-dialogInputCorner.Parent = dialogInput
-
-local dialogInputPad = Instance.new("UIPadding")
-dialogInputPad.PaddingLeft = UDim.new(0, 10)
-dialogInputPad.PaddingRight = UDim.new(0, 10)
-dialogInputPad.Parent = dialogInput
-
-local dialogConfirm = Instance.new("TextButton")
-dialogConfirm.Size = UDim2.new(0.5, -15, 0, 30)
-dialogConfirm.Position = UDim2.new(0, 10, 1, -40)
-dialogConfirm.BackgroundColor3 = COLORS.accent
-dialogConfirm.BorderSizePixel = 0
-dialogConfirm.Text = "Confirm"
-dialogConfirm.TextColor3 = COLORS.crust
-dialogConfirm.Font = Enum.Font.GothamBold
-dialogConfirm.TextSize = 12
-dialogConfirm.ZIndex = 12
-dialogConfirm.Parent = dialogBox
-
-local dialogConfirmCorner = Instance.new("UICorner")
-dialogConfirmCorner.CornerRadius = UDim.new(0, 6)
-dialogConfirmCorner.Parent = dialogConfirm
-
-local dialogCancel = Instance.new("TextButton")
-dialogCancel.Size = UDim2.new(0.5, -15, 0, 30)
-dialogCancel.Position = UDim2.new(0.5, 5, 1, -40)
-dialogCancel.BackgroundColor3 = COLORS.bgLighter
-dialogCancel.BorderSizePixel = 0
-dialogCancel.Text = "Cancel"
-dialogCancel.TextColor3 = COLORS.text
-dialogCancel.Font = Enum.Font.GothamBold
-dialogCancel.TextSize = 12
-dialogCancel.ZIndex = 12
-dialogCancel.Parent = dialogBox
-
-local dialogCancelCorner = Instance.new("UICorner")
-dialogCancelCorner.CornerRadius = UDim.new(0, 6)
-dialogCancelCorner.Parent = dialogCancel
 
 local dialogCallback = nil
 
 local function showProjectDialog(callback)
-    dialogCallback = callback
-    dialogInput.Text = ""
-    dialogOverlay.Visible = true
-    dialogInput:CaptureFocus()
+    -- instead of showing dialog, auto-generate name from place
+    local placeName = game.Name or "Untitled"
+    if placeName == "" or placeName == "Place1" then
+        placeName = "Project_" .. game.PlaceId
+    end
+    if callback then callback(placeName) end
 end
 
 local function hideProjectDialog()
     dialogOverlay.Visible = false
-    dialogCallback = nil
 end
 
-dialogConfirm.MouseButton1Click:Connect(function()
-    local name = dialogInput.Text
-    if name and name ~= "" then
-        hideProjectDialog()
-        if dialogCallback then
-            dialogCallback(name)
-        end
-    end
-end)
-
-dialogCancel.MouseButton1Click:Connect(function()
-    hideProjectDialog()
-end)
-
-dialogInput.FocusLost:Connect(function(enterPressed)
-    if enterPressed then
-        local name = dialogInput.Text
-        if name and name ~= "" then
-            hideProjectDialog()
-            if dialogCallback then
-                dialogCallback(name)
-            end
-        end
-    end
-end)
-
--- ============ CONFLICT DIALOG ============
-
-local conflictOverlay = Instance.new("Frame")
-conflictOverlay.Size = UDim2.new(1, 0, 1, 0)
-conflictOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-conflictOverlay.BackgroundTransparency = 0.5
-conflictOverlay.BorderSizePixel = 0
-conflictOverlay.Visible = false
-conflictOverlay.ZIndex = 10
-conflictOverlay.Parent = main
-
-local conflictBox = Instance.new("Frame")
-conflictBox.Size = UDim2.new(0, 260, 0, 200)
-conflictBox.Position = UDim2.new(0.5, -130, 0.5, -100)
-conflictBox.BackgroundColor3 = COLORS.bgLight
-conflictBox.BorderSizePixel = 0
-conflictBox.ZIndex = 11
-conflictBox.Parent = conflictOverlay
-
-local conflictCorner = Instance.new("UICorner")
-conflictCorner.CornerRadius = UDim.new(0, 12)
-conflictCorner.Parent = conflictBox
-
-local conflictTitle = Instance.new("TextLabel")
-conflictTitle.Size = UDim2.new(1, -20, 0, 24)
-conflictTitle.Position = UDim2.new(0, 10, 0, 12)
-conflictTitle.BackgroundTransparency = 1
-conflictTitle.Text = "Conflict Detected!"
-conflictTitle.TextColor3 = COLORS.danger
-conflictTitle.Font = Enum.Font.GothamBold
-conflictTitle.TextSize = 14
-conflictTitle.ZIndex = 12
-conflictTitle.Parent = conflictBox
-
-local conflictDesc = Instance.new("TextLabel")
-conflictDesc.Size = UDim2.new(1, -20, 0, 60)
-conflictDesc.Position = UDim2.new(0, 10, 0, 40)
-conflictDesc.BackgroundTransparency = 1
-conflictDesc.Text = "Files have been modified in both Studio and filesystem since last sync."
-conflictDesc.TextColor3 = COLORS.textDim
-conflictDesc.Font = Enum.Font.Gotham
-conflictDesc.TextSize = 11
-conflictDesc.TextWrapped = true
-conflictDesc.ZIndex = 12
-conflictDesc.Parent = conflictBox
-
-local conflictCount = Instance.new("TextLabel")
-conflictCount.Size = UDim2.new(1, -20, 0, 20)
-conflictCount.Position = UDim2.new(0, 10, 0, 100)
-conflictCount.BackgroundTransparency = 1
-conflictCount.Text = "0 files affected"
-conflictCount.TextColor3 = COLORS.warning
-conflictCount.Font = Enum.Font.GothamBold
-conflictCount.TextSize = 12
-conflictCount.ZIndex = 12
-conflictCount.Parent = conflictBox
-
-local conflictKeepStudio = Instance.new("TextButton")
-conflictKeepStudio.Size = UDim2.new(0.5, -15, 0, 30)
-conflictKeepStudio.Position = UDim2.new(0, 10, 1, -75)
-conflictKeepStudio.BackgroundColor3 = COLORS.accent
-conflictKeepStudio.BorderSizePixel = 0
-conflictKeepStudio.Text = "Keep Studio"
-conflictKeepStudio.TextColor3 = COLORS.crust
-conflictKeepStudio.Font = Enum.Font.GothamBold
-conflictKeepStudio.TextSize = 11
-conflictKeepStudio.ZIndex = 12
-conflictKeepStudio.Parent = conflictBox
-
-local conflictKeepStudioCorner = Instance.new("UICorner")
-conflictKeepStudioCorner.CornerRadius = UDim.new(0, 6)
-conflictKeepStudioCorner.Parent = conflictKeepStudio
-
-local conflictKeepServer = Instance.new("TextButton")
-conflictKeepServer.Size = UDim2.new(0.5, -15, 0, 30)
-conflictKeepServer.Position = UDim2.new(0.5, 5, 1, -75)
-conflictKeepServer.BackgroundColor3 = COLORS.success
-conflictKeepServer.BorderSizePixel = 0
-conflictKeepServer.Text = "Keep Server"
-conflictKeepServer.TextColor3 = COLORS.crust
-conflictKeepServer.Font = Enum.Font.GothamBold
-conflictKeepServer.TextSize = 11
-conflictKeepServer.ZIndex = 12
-conflictKeepServer.Parent = conflictBox
-
-local conflictKeepServerCorner = Instance.new("UICorner")
-conflictKeepServerCorner.CornerRadius = UDim.new(0, 6)
-conflictKeepServerCorner.Parent = conflictKeepServer
-
-local conflictCancel = Instance.new("TextButton")
-conflictCancel.Size = UDim2.new(1, -20, 0, 28)
-conflictCancel.Position = UDim2.new(0, 10, 1, -38)
-conflictCancel.BackgroundColor3 = COLORS.bgLighter
-conflictCancel.BorderSizePixel = 0
-conflictCancel.Text = "Cancel"
-conflictCancel.TextColor3 = COLORS.text
-conflictCancel.Font = Enum.Font.GothamBold
-conflictCancel.TextSize = 11
-conflictCancel.ZIndex = 12
-conflictCancel.Parent = conflictBox
-
-local conflictCancelCorner = Instance.new("UICorner")
-conflictCancelCorner.CornerRadius = UDim.new(0, 6)
-conflictCancelCorner.Parent = conflictCancel
-
+-- conflict dialog: auto-accept server version (no UI prompt)
 local conflictCallback = nil
 local currentConflicts = {}
 
 local function showConflictDialog(conflicts, callback)
     currentConflicts = conflicts
-    conflictCallback = callback
-    conflictCount.Text = #conflicts .. " file(s) affected"
-    conflictOverlay.Visible = true
+    if callback then callback("server") end
 end
 
 local function hideConflictDialog()
-    conflictOverlay.Visible = false
     conflictCallback = nil
     currentConflicts = {}
 end
-
-conflictKeepStudio.MouseButton1Click:Connect(function()
-    hideConflictDialog()
-    log("Keeping Studio version (skipped pull)", COLORS.logInfo)
-end)
-
-conflictKeepServer.MouseButton1Click:Connect(function()
-    hideConflictDialog()
-    if conflictCallback then
-        conflictCallback("server")
-    end
-end)
-
-conflictCancel.MouseButton1Click:Connect(function()
-    hideConflictDialog()
-end)
 
 -- ============ FUNCTIONS ============
 
@@ -1224,32 +862,7 @@ local logCount = 0
 local maxLogs = 100
 
 local function log(message, color)
-    logCount += 1
-
-    local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1, 0, 0, 18)
-    label.BackgroundTransparency = 1
-    label.TextColor3 = color or COLORS.overlay1
-    label.TextXAlignment = Enum.TextXAlignment.Left
-    label.Font = Enum.Font.RobotoMono
-    label.TextSize = 12
-    label.Text = os.date("%H:%M") .. "  " .. string.lower(message)
-    label.LayoutOrder = logCount
-    label.TextTruncate = Enum.TextTruncate.AtEnd
-    label.Parent = logFrame
-
-    task.defer(function()
-        logFrame.CanvasPosition = Vector2.new(0, logFrame.AbsoluteCanvasSize.Y)
-    end)
-
-    if logCount > maxLogs then
-        local children = logFrame:GetChildren()
-        for _, child in ipairs(children) do
-            if child:IsA("TextLabel") and child.LayoutOrder < logCount - 80 then
-                child:Destroy()
-            end
-        end
-    end
+    -- no-op: UI log removed for minimal design
 end
 
 local function updateProjectDisplay(projectName)
@@ -1305,23 +918,18 @@ local function updateStatus(text, isConnected, stats)
 
     if isConnected then
         tweenProperty(statusDot, {BackgroundColor3 = COLORS.green}, TWEEN_SMOOTH)
-        tweenProperty(connectBtn, {BackgroundColor3 = COLORS.surface0}, TWEEN_SMOOTH)
-        connectBtn.TextColor3 = COLORS.green
-        connectBtn.Text = "disconnect"
-        -- update cloud badge when connected
-        cloudBadgeText.Text = "Cloud AI"
-        cloudBadgeStroke.Color = COLORS.green
-        cloudBadgeText.TextColor3 = COLORS.green
-        cloudBadge.BackgroundColor3 = COLORS.green
+        statusLabel.Text = "Connected"
+        statusLabel.TextColor3 = COLORS.green
+        connectBtn.Text = "Disconnect"
+        connectBtn.BackgroundColor3 = COLORS.surface1
+        connectBtn.TextColor3 = COLORS.text
     else
         tweenProperty(statusDot, {BackgroundColor3 = COLORS.red}, TWEEN_SMOOTH)
-        tweenProperty(connectBtn, {BackgroundColor3 = COLORS.surface1}, TWEEN_SMOOTH)
-        connectBtn.TextColor3 = COLORS.text
-        connectBtn.Text = "connect"
-        cloudBadgeText.Text = "Cloud AI"
-        cloudBadgeStroke.Color = COLORS.accent
-        cloudBadgeText.TextColor3 = COLORS.accent
-        cloudBadge.BackgroundColor3 = COLORS.accent
+        statusLabel.Text = "Disconnected"
+        statusLabel.TextColor3 = COLORS.overlay1
+        connectBtn.Text = "Connect"
+        connectBtn.BackgroundColor3 = COLORS.accent
+        connectBtn.TextColor3 = COLORS.crust
     end
 end
 

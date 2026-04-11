@@ -102,7 +102,7 @@ function setupProjectWatcher(name) {
     let source = "";
     if (eventType !== "unlink" && fs.existsSync(filePath)) source = safeReadFile(filePath);
     getPendingChanges(safe).set(rel, { type: eventType, path: rel, source, timestamp: Date.now() });
-    console.log(`  [${safe}] File ${eventType}: ${rel}`);
+    // silent file change
   };
 
   watcher.on("change", p => handleChange(p, "change"));
@@ -110,7 +110,7 @@ function setupProjectWatcher(name) {
   watcher.on("unlink", p => handleChange(p, "unlink"));
   watcher.on("error", err => console.error(`  [${safe}] Watcher error:`, err));
   watchersByProject.set(safe, watcher);
-  console.log(`  Watching ${srcDir}`);
+  // silent watcher start
 }
 
 // ---- MCP command queue ----
@@ -515,8 +515,7 @@ installPlugin();
 
 app.listen(PORT, () => {
   console.log(`\n  Reagent Connector v${VERSION}`);
-  console.log(`  Port: ${PORT}`);
-  console.log(`  Projects: ${PROJECTS_DIR}\n`);
+  console.log(`  Port: ${PORT}\n`);
   bridgeConnect();
 });
 
