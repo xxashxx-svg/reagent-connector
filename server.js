@@ -140,7 +140,7 @@ function installPlugin() {
   try {
     ensureDir(pluginsDir);
     fs.copyFileSync(localPlugin, path.join(pluginsDir, "ReagentConnector.lua"));
-    console.log("  ✓ Plugin installed");
+    console.log("  Plugin installed");
   } catch (err) {
     console.log("  Could not install plugin:", err.message);
   }
@@ -175,7 +175,7 @@ app.get("/ping", (_, res) => {
 app.post("/studio-connect", (req, res) => {
   const { project, placeId, placeName } = req.body;
   connectedStudios.set(placeId || Date.now(), { project: project || "Unknown", placeName: placeName || "Unknown", connectedAt: new Date().toISOString() });
-  console.log(`\n  ✓ Studio connected: ${project || "Unknown"}\n`);
+  console.log(`\n  Studio connected: ${project || "Unknown"}\n`);
   res.json({ status: "ok", message: "Connected", connectedStudios: connectedStudios.size });
 });
 
@@ -412,7 +412,7 @@ async function bridgeConnect() {
         setTimeout(bridgeConnect, 30000);
         return;
       }
-      console.log(`  ✓ License valid (${vData.plan || "free"} plan)`);
+      console.log(`  License valid (${vData.plan || "free"} plan)`);
       verified = true;
     } catch {
       console.log("  Could not verify (server unreachable). Connecting anyway...");
@@ -424,7 +424,7 @@ async function bridgeConnect() {
   ws = new WebSocket(config.server, { headers: { authorization: `Bearer ${config.token}` } });
 
   ws.on("open", async () => {
-    console.log("  ✓ Connected to Reagent cloud");
+    console.log("  Connected to Reagent cloud");
     const projects = getActiveProjects();
     ws.send(JSON.stringify({ type: "status", lualinkConnected: true, projects }));
 
