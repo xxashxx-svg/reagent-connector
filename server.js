@@ -10,13 +10,13 @@ import chokidar from "chokidar";
 import WebSocket from "ws";
 import readline from "readline";
 
-const VERSION = "1.6.0";
+const VERSION = "1.7.0";
 const BRIDGE_HEARTBEAT = 30000;
 const STATUS_POLL = 5000;
 
 // ---- config ----
 const CONFIG_PATH = path.join(process.cwd(), "config.json");
-let config = { token: "", server: "wss://reagent-server-small-shape-4547.fly.dev/bridge", port: 34873 };
+let config = { token: "", server: "wss://reagent-5pnx.onrender.com/bridge", port: 34873 };
 try {
   if (fs.existsSync(CONFIG_PATH)) config = { ...config, ...JSON.parse(fs.readFileSync(CONFIG_PATH, "utf-8")) };
 } catch {}
@@ -367,25 +367,57 @@ let sp = null;
 let lastStatus = "";
 let verified = false;
 
+// auth endpoint — dashboard sends token here automatically
+let authResolve = null;
+app.post("/auth", express.json(), (req, res) => {
+  const token = req.body?.token;
+  if (!token) return res.status(400).json({ error: "No token" });
+  config.token = token;
+  try {
+    const cfg = fs.existsSync(CONFIG_PATH) ? JSON.parse(fs.readFileSync(CONFIG_PATH, "utf-8")) : {};
+    cfg.token = token;
+    fs.writeFileSync(CONFIG_PATH, JSON.stringify(cfg, null, 2));
+  } catch {}
+  console.log("  Token received from dashboard!");
+  console.log("  Token saved to config.json\n");
+  res.json({ ok: true });
+  if (authResolve) { authResolve(token); authResolve = null; }
+});
+
 async function askForToken() {
-  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  // try opening browser first for auto-setup
+  console.log("\n  No bridge token found.");
+  console.log("  Opening dashboard to connect automatically...\n");
+  const dashUrl = "https://reagent-ai.vercel.app/dashboard?setup=connector";
+  try {
+    const { exec } = await import("child_process");
+    const cmd = process.platform === "win32" ? `start ${dashUrl}` : process.platform === "darwin" ? `open ${dashUrl}` : `xdg-open ${dashUrl}`;
+    exec(cmd);
+  } catch {}
+
+  console.log("  Waiting for token from dashboard...");
+  console.log("  (or paste manually below)\n");
+
+  // race: either the dashboard sends it via /auth, or user pastes manually
   return new Promise((resolve) => {
-    console.log("\n  No bridge token found.");
-    console.log("  Get it from reagent-ai.vercel.app → Settings → Connection\n");
-    rl.question("  Paste your token here: ", (answer) => {
+    authResolve = resolve;
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+    rl.question("  Token: ", (answer) => {
       rl.close();
       const token = answer.trim();
-      if (token) {
+      if (token && !config.token) {
         config.token = token;
-        // save to config.json so they don't have to enter it again
         try {
           const cfg = fs.existsSync(CONFIG_PATH) ? JSON.parse(fs.readFileSync(CONFIG_PATH, "utf-8")) : {};
           cfg.token = token;
           fs.writeFileSync(CONFIG_PATH, JSON.stringify(cfg, null, 2));
           console.log("  Token saved to config.json\n");
         } catch {}
+        resolve(token);
+      } else if (!config.token) {
+        resolve("");
       }
-      resolve(token);
+      authResolve = null;
     });
   });
 }
